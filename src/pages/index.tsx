@@ -1,12 +1,17 @@
-import { SignIn, SignInButton, SignOutButton, useUser } from "@clerk/clerk-react";
+import {
+  SignIn,
+  SignInButton,
+  SignOutButton,
+  useUser,
+} from "@clerk/clerk-react";
 import Head from "next/head";
 import Link from "next/link";
 import { api } from "~/utils/api";
 
 export default function Home() {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
-
   const user = useUser();
+
+  const { data } = api.games.getAll.useQuery();
 
   return (
     <>
@@ -16,10 +21,13 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        {!user.isSignedIn && <SignInButton />}
-        {user.isSignedIn && <SignOutButton />}
-
-        <SignIn path="/sign-in" routing="path" signUpUrl="/sign-up" />
+        <div>
+          {!user.isSignedIn && <SignInButton />}
+          {user.isSignedIn && <SignOutButton />}
+        </div>
+        <div>
+          {data?.map((game) => (<div key={game.id}>Game: {game.name} <br></br>Gen: {game.generation}</div>))}
+        </div>
       </main>
     </>
   );
