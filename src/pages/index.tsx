@@ -32,7 +32,10 @@ export default function Home() {
   type RunWithUser = RouterOutputs["runs"]["getAllActive"][number];
   const RunView = (props: RunWithUser) => {
     const { run, user } = props;
-    console.log(run);
+    const latestCatch = run.latestCatch;
+    const imagePath = latestCatch
+      ? `/pkmn/full/${latestCatch.toUpperCase()}.png`
+      : "";
     return (
       <div key={run.id} className=" flex gap-3 border-b border-slate-400 p-4">
         <img
@@ -49,13 +52,14 @@ export default function Home() {
               <img
                 src={`/box-art/${run.game.name}.png`}
                 className="h-20 w-20"
+                
               />
               {run.game.name}
             </span>
-
             <img
-              src={`/pkmn/full/${run.latestCatch?.toUpperCase()}.png`}
+              src={imagePath}
               className="h-16 w-16"
+              alt={imagePath}
             />
           </div>
         </div>
