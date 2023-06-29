@@ -7,12 +7,12 @@ import {
 import Head from "next/head";
 import Link from "next/link";
 import { RouterOutputs, api } from "~/utils/api";
-import relativeTim from "dayjs/plugin/relativeTime";
+import relativeTime from "dayjs/plugin/relativeTime";
 
 export default function Home() {
   const user = useUser();
 
-  const { data, isLoading } = api.runs.getAll.useQuery();
+  const { data, isLoading } = api.runs.getAllActive.useQuery();
 
   const CreateRunWizard = () => {
     const { user } = useUser();
@@ -29,31 +29,39 @@ export default function Home() {
     );
   };
 
-  type RunWithUser = RouterOutputs["runs"]["getAll"][number];
+  type RunWithUser = RouterOutputs["runs"]["getAllActive"][number];
   const RunView = (props: RunWithUser) => {
     const { run, user } = props;
-    console.log(user);
+    console.log(run);
     return (
-      <div key={run.id} className=" flex border-b border-slate-400 p-4">
+      <div key={run.id} className=" flex gap-3 border-b border-slate-400 p-4">
         <img
           src={user?.profileImageUrl}
           alt="Profile Image"
           className="h-16 w-16"
         />
-        <div className="flex flex-col">
+        <div className="flex flex-col gap-3">
           <div className="flex">
             <span>{user?.username}</span>
           </div>
-          <span>
-            {run.gameId} &nbsp;
-            {JSON.stringify(run.encounters)}
-          </span>
+          <div className="flex">
+            <span className="text-center">
+              <img
+                src={`/box-art/${run.game.name}.png`}
+                className="h-20 w-20"
+              />
+              {run.game.name}
+            </span>
+
+            <img
+              src={`/pkmn/full/${run.latestCatch?.toUpperCase()}.png`}
+              className="h-16 w-16"
+            />
+          </div>
         </div>
       </div>
     );
   };
-
-  console.log(user);
 
   if (isLoading) return <div>Loading...</div>;
   if (!data) return <div>Something went wrong.</div>;

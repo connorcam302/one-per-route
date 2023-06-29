@@ -12,9 +12,15 @@ const filterUserForClient = (user: User) => {
 };
 
 export const runsRouter = createTRPCRouter({
-  getAll: publicProcedure.query(async ({ ctx }) => {
+  getAllActive: publicProcedure.query(async ({ ctx }) => {
     const runs = await ctx.prisma.run.findMany({
       take: 100,
+      include: {
+        game: true,
+      },
+      where: {
+        active: true,
+      },
     });
 
     const users = (
@@ -25,6 +31,11 @@ export const runsRouter = createTRPCRouter({
     ).map(filterUserForClient);
 
     return runs.map((run) => ({
+      game: ctx.prisma.game.findFirst({
+        where: {
+          id: run.gameId,
+        },
+      }),
       run,
       user: users.find((user) => user.id === run.userId),
     }));

@@ -23,6 +23,7 @@ model Run {
     id        Int      @id @default(autoincrement())
     createdAt DateTime @default(now())
     updatedAt DateTime? @updatedAt
+    active   Boolean  @default(true)
 
     game   Game @relation(fields: [gameId], references: [id])
     gameId Int
